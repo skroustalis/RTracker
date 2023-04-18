@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "392596617302",
+    "project_id": "rtracker-5f7fb",
+    "storage_bucket": "rtracker-5f7fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392596617302:android:36bb07055c7ba565c1a3f7",
+        "android_client_info": {
+          "package_name": "sokrous.rtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392596617302-s3lq9ulub8b7r05rpmjgr2ih97tih9vn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG0-ThVteZCJZIapi5zwg6OS6T4bIFKeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392596617302-s3lq9ulub8b7r05rpmjgr2ih97tih9vn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

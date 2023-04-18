@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_home"
+            android:icon="@drawable/baseline_home_24"
+            android:title="Home"
+            />
+        <item android:id="@+id/nav_map"
+            android:icon="@drawable/baseline_map_24"
+            android:title="Map"
+            />
+    </group>
+    <item android:title="Routes">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/nav_walk"
+                    android:icon="@drawable/baseline_directions_walk_24"
+                    android:title="Walk"
+                    />
+                <item android:id="@+id/nav_bike"
+                    android:icon="@drawable/baseline_directions_bike_24"
+                    android:title="Bike"
+                    />
+            </group>
+        </menu>
+    </item>
+
+
+</menu>
