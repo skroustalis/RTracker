@@ -1,24 +1,27 @@
 package sokrous.rtracker;
 
 
+import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.Manifest;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -28,33 +31,43 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import sokrous.rtracker.databinding.ActivityMapsBinding;
 
-public class MapsActivity extends DrawerBaseActivity  {
-    private ActivityMapsBinding binding;
+public class MapsActivity extends DrawerBaseActivity implements OnMapReadyCallback, LocationListener, View.OnClickListener {
 
-    SupportMapFragment supportMapFragment;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    private static final int REQUEST_CODE=101;
+    private LatLng previousLatLng;
+
+    private GoogleMap mMap;
+
+    private LocationManager locationManager;
+
+    private Marker locationMarker;
+
+    private boolean isDrawingEnable = false;
+
+    private ImageButton startButton;
+    private ImageButton stopButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        sokrous.rtracker.databinding.ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         allocatedActivityTitle("Map");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        supportMapFragment.getMapAsync(this);
 
-        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        Dexter.withContext(getApplicationContext()).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        Dexter.withContext(getApplicationContext())
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        getCurrentLocation();
+                        startLocationUpdates();
                     }
 
                     @Override
@@ -67,56 +80,69 @@ public class MapsActivity extends DrawerBaseActivity  {
                         permissionToken.cancelPermissionRequest();
                     }
                 }).check();
+
+        // Find the start button
+        startButton = findViewById(R.id.startBtn);
+        stopButton = findViewById(R.id.stopBtn);
+
+        // Set a click listener on the start button
+        startButton.setOnClickListener(this);
+        stopButton.setOnClickListener(this);
+
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//
-//        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Current Location"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//    }
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == startButton.getId()){
+            startButton.setVisibility(View.GONE);
+            stopButton.setVisibility(View.VISIBLE);
+            isDrawingEnable = true;
+            startLocationUpdates();
+        } else {
+            startButton.setVisibility(View.VISIBLE);
+            stopButton.setVisibility(View.GONE);
+            isDrawingEnable = false;
+            stopLocationUpdates();
+        }
+    }
 
-    public void getCurrentLocation(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+
+    public void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        Task<Location> task=fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                supportMapFragment.getMapAsync(new OnMapReadyCallback(){
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        if(location !=null){
-                        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-                        }
-                        else {
-                            Toast.makeText(MapsActivity.this, "Location App permissions", Toast.LENGTH_SHORT).show();
-
-                        }
-                     }
-
-                });
-            }
-        });
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
     }
 
+    public void stopLocationUpdates() {
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (locationMarker == null) {
+            locationMarker = mMap.addMarker(new MarkerOptions().position(latlng).title("Current Location"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+        } else {
+            locationMarker.setPosition(latlng);
+            // Add a line between the previous and current locations
+            if (previousLatLng != null && isDrawingEnable) {
+                mMap.addPolyline(new PolylineOptions()
+                        .add(previousLatLng, latlng)
+                        .width(10)
+                        .color(0xffefbb5e));
+            }
+            previousLatLng = latlng;
+        }
+
+    }
+
+
 }
+
+

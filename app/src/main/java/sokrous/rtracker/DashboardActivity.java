@@ -3,6 +3,8 @@ package sokrous.rtracker;
 
 import android.os.Bundle;
 
+import com.google.android.gms.maps.GoogleMap;
+
 import sokrous.rtracker.databinding.ActivityDashboardBinding;
 
 public class DashboardActivity extends DrawerBaseActivity {
@@ -16,4 +18,5 @@ public class DashboardActivity extends DrawerBaseActivity {
         setContentView(activityDashboardBinding.getRoot());
         allocatedActivityTitle( "Dashboard");
     }
+
 }
