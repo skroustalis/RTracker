@@ -1,11 +1,12 @@
-package sokrous.rtracker;
+package sokrous.rtracker.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.WindowManager;
 import android.widget.TextView;
+
+import sokrous.rtracker.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
                   e.printStackTrace();
               }
               finally {
-                  Intent intent = new Intent(SplashActivity.this,WelcomeActivity.class);
+                  Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                   startActivity(intent);
                   finish();
               }

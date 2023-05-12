@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_home"
             android:icon="@drawable/baseline_home_24"
@@ -9,18 +10,33 @@
             android:icon="@drawable/baseline_map_24"
             android:title="Map"
             />
+        <item android:id="@+id/nav_share"
+            android:icon="@drawable/baseline_share_24"
+            android:title="Share" />
     </group>
-    <item android:title="Routes">
+        <item android:id="@+id/nav_routes"
+            android:title="Routes"
+            android:icon="@drawable/baseline_route_24">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item android:id="@+id/nav_walk"
+                        android:icon="@drawable/baseline_directions_walk_24"
+                        android:title="Walk" />
+                    <item android:id="@+id/nav_bike"
+                        android:icon="@drawable/baseline_directions_bike_24"
+                        android:title="Bike" />
+                </group>
+            </menu>
+        </item>
+    <item android:title="Settings">
         <menu>
             <group android:checkableBehavior="single">
-                <item android:id="@+id/nav_walk"
-                    android:icon="@drawable/baseline_directions_walk_24"
-                    android:title="Walk"
-                    />
-                <item android:id="@+id/nav_bike"
-                    android:icon="@drawable/baseline_directions_bike_24"
-                    android:title="Bike"
-                    />
+                <item android:id="@+id/nav_logout"
+                    android:icon="@drawable/baseline_logout_24"
+                    android:title="Logout" />
+                <item android:id="@+id/nav_deleteAc"
+                    android:icon="@drawable/baseline_delete_24"
+                    android:title="Delete Account" />
             </group>
         </menu>
     </item>

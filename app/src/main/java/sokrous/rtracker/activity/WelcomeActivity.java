@@ -1,11 +1,10 @@
-package sokrous.rtracker;
+package sokrous.rtracker.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,12 +12,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import sokrous.rtracker.R;
+import sokrous.rtracker.fragment.WelcomeFragment;
+
 public class WelcomeActivity extends AppCompatActivity {
 
+    private FragmentManager fragmentManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        fragmentManager = getSupportFragmentManager();
+
+        fragmentManager.beginTransaction().replace(R.id.welcomeContainer, new WelcomeFragment()).commit();
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -42,19 +49,5 @@ public class WelcomeActivity extends AppCompatActivity {
                 Log.w("Rtracker", "Failed to read value.", error.toException());
             }
         });
-    }
-
-    public void onButtonSignUpClicked(View view){
-
-        Intent intent = new Intent(WelcomeActivity.this,SignUpActivity.class);
-        startActivity(intent);
-
-    }
-
-    public void onButtonSignInClicked(View view){
-
-        Intent intent = new Intent(WelcomeActivity.this,SignInActivity.class);
-        startActivity(intent);
-
     }
 }
